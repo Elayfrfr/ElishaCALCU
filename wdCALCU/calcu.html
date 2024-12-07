@@ -88,17 +88,17 @@
       background-color: #555;
     }
 
-    /* 0 button vertically elongated, placed at the outermost right */
+   
     .button.zero {
-      grid-column: 4 / 5; /* Move 0 to the rightmost side */
-      grid-row: 4 / 6; /* Span vertically */
-      height: 140px; /* Vertically elongated */
+      grid-column: 4 / 5; 
+      grid-row: 4 / 6;
+      height: 140px;
       color: #e198c5;
     }
 
-    /* Move the dot button directly below the 3 button */
+    
     .button.dot {
-      grid-column: 3 / 4; /* Place it beside the 3 button */
+      grid-column: 3 / 4;
       grid-row: 5 / 6;
     }
 
@@ -131,8 +131,8 @@
       <button class="button" onclick="appendNumber('3')">3</button>
       <button class="button equal" onclick="calculate()">=</button>
 
-      <button class="button dot" onclick="appendNumber('.')">.</button> <!-- Moved dot button to the left of 0 -->
-      <button class="button zero" onclick="appendNumber('0')">0</button> <!-- 0 is now the outermost right -->
+      <button class="button dot" onclick="appendNumber('.')">.</button> 
+      <button class="button zero" onclick="appendNumber('0')">0</button> 
     </div>
   </div>
 
@@ -145,18 +145,18 @@
       const equationEl = document.getElementById("equation");
       const answerEl = document.getElementById("answer");
 
-      // Adjust text size based on equation length
-      let fontSize = 2.5; // default font size for equation
-      let answerFontSize = 1.5; // default font size for answer
+      
+      let fontSize = 2.5; 
+      let answerFontSize = 1.5; 
 
-      // If the equation or answer is too long, reduce the font size
+     
       if (equation.length > 15 || answer.length > 15) {
-        fontSize = 2; // smaller font for long equations
-        answerFontSize = 1.2; // smaller font for long answers
+        fontSize = 2; 
+        answerFontSize = 1.2; 
       }
       if (equation.length > 20 || answer.length > 20) {
-        fontSize = 1.5; // even smaller font
-        answerFontSize = 1; // even smaller font for long answers
+        fontSize = 1.5; 
+        answerFontSize = 1; 
       }
 
       equationEl.style.fontSize = `${fontSize}rem`;
@@ -185,7 +185,7 @@
       }
       equation += number;
       try {
-        answer = eval(equation.replace(/\u00F7/g, '/').replace(/\u00D7/g, '*')).toString(); // Replace symbols before eval
+        answer = eval(equation.replace(/\u00F7/g, '/').replace(/\u00D7/g, '*')).toString(); 
       } catch {
         answer = "";
       }
@@ -216,7 +216,7 @@
       }
       equation = equation.slice(0, -1);
       try {
-        answer = eval(equation.replace(/\u00F7/g, '/').replace(/\u00D7/g, '*')).toString(); // Replace symbols before eval
+        answer = eval(equation.replace(/\u00F7/g, '/').replace(/\u00D7/g, '*')).toString(); 
       } catch {
         answer = "";
       }
@@ -225,7 +225,7 @@
 
     function calculate() {
       try {
-        answer = eval(equation.replace(/\u00F7/g, '/').replace(/\u00D7/g, '*')).toString(); // Replace symbols before eval
+        answer = eval(equation.replace(/\u00F7/g, '/').replace(/\u00D7/g, '*')).toString(); 
         answerFinalized = true;
         updateDisplay();
       } catch {
