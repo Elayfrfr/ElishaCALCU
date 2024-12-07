@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #000000;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .calculator {
+      width: 320px;
+      background-color: #222;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .display {
+      background-color: #000000;
+      color: #fff;
+      border: none;
+      text-align: right;
+      padding: 10px;
+      margin-bottom: 10px;
+      height: 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .display .equation {
+      font-size: 2.5rem;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .display .answer {
+      font-size: 1.5rem;
+      color: #e198c5;
+      opacity: 0.7;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .button {
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.5rem;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .button.operation {
+      color: #e198c5;
+    }
+
+    .button.equal {
+      grid-column: span 2;
+      background-color: #333;
+      color: #fff;
+    }
+
+    .button.clear {
+        color: #e198c5;
+    }
+
+    .button:active {
+      background-color: #555;
+    }
+
+    /* 0 button vertically elongated, placed at the outermost right */
+    .button.zero {
+      grid-column: 4 / 5; /* Move 0 to the rightmost side */
+      grid-row: 4 / 6; /* Span vertically */
+      height: 140px; /* Vertically elongated */
+      color: #e198c5;
+    }
+
+    /* Move the dot button directly below the 3 button */
+    .button.dot {
+      grid-column: 3 / 4; /* Place it beside the 3 button */
+      grid-row: 5 / 6;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="display">
+      <div class="equation" id="equation">0</div>
+      <div class="answer" id="answer"></div>
+    </div>
+    <div class="buttons">
+      <button class="button clear" onclick="clearDisplay()">C</button>
+      <button class="button operation" onclick="deleteLast()">&#9003;</button>
+      <button class="button operation" onclick="appendOperator('/')">&#247;</button>
+      <button class="button operation" onclick="appendOperator('*')">&#215;</button>
+
+      <button class="button" onclick="appendNumber('7')">7</button>
+      <button class="button" onclick="appendNumber('8')">8</button>
+      <button class="button" onclick="appendNumber('9')">9</button>
+      <button class="button operation" onclick="appendOperator('-')">&#8722;</button>
+
+      <button class="button" onclick="appendNumber('4')">4</button>
+      <button class="button" onclick="appendNumber('5')">5</button>
+      <button class="button" onclick="appendNumber('6')">6</button>
+      <button class="button operation" onclick="appendOperator('+')">&#43;</button>
+
+      <button class="button" onclick="appendNumber('1')">1</button>
+      <button class="button" onclick="appendNumber('2')">2</button>
+      <button class="button" onclick="appendNumber('3')">3</button>
+      <button class="button equal" onclick="calculate()">=</button>
+
+      <button class="button dot" onclick="appendNumber('.')">.</button> <!-- Moved dot button to the left of 0 -->
+      <button class="button zero" onclick="appendNumber('0')">0</button> <!-- 0 is now the outermost right -->
+    </div>
+  </div>
+
+  <script>
+    let equation = "";
+    let answer = "";
+    let answerFinalized = false;
+
+    function updateDisplay() {
+      const equationEl = document.getElementById("equation");
+      const answerEl = document.getElementById("answer");
+
+      // Adjust text size based on equation length
+      let fontSize = 2.5; // default font size for equation
+      let answerFontSize = 1.5; // default font size for answer
+
+      // If the equation or answer is too long, reduce the font size
+      if (equation.length > 15 || answer.length > 15) {
+        fontSize = 2; // smaller font for long equations
+        answerFontSize = 1.2; // smaller font for long answers
+      }
+      if (equation.length > 20 || answer.length > 20) {
+        fontSize = 1.5; // even smaller font
+        answerFontSize = 1; // even smaller font for long answers
+      }
+
+      equationEl.style.fontSize = `${fontSize}rem`;
+      answerEl.style.fontSize = `${answerFontSize}rem`;
+
+      if (answerFinalized) {
+        equationEl.style.transform = "translateY(0)";
+        equationEl.style.opacity = "1";
+        answerEl.style.transform = "translateY(-100%)";
+        answerEl.style.opacity = "0";
+        equationEl.textContent = answer;
+        answerEl.textContent = "";
+      } else {
+        equationEl.style.transform = "translateY(-50%)";
+        equationEl.style.opacity = "0.7";
+        answerEl.style.transform = "translateY(0)";
+        answerEl.style.opacity = "1";
+        equationEl.textContent = equation || "0";
+        answerEl.textContent = answer;
+      }
+    }
+
+    function appendNumber(number) {
+      if (answerFinalized) {
+        clearDisplay();
+      }
+      equation += number;
+      try {
+        answer = eval(equation.replace(/\u00F7/g, '/').replace(/\u00D7/g, '*')).toString(); // Replace symbols before eval
+      } catch {
+        answer = "";
+      }
+      updateDisplay();
+    }
+
+    function appendOperator(operator) {
+      if (equation === "" || /[+\-\u00D7\u00F7]$/.test(equation)) return;
+      if (answerFinalized) {
+        equation = answer;
+        answerFinalized = false;
+      }
+      equation += operator === '/' ? '\u00F7' : operator === '*' ? '\u00D7' : operator;
+      updateDisplay();
+    }
+
+    function clearDisplay() {
+      equation = "";
+      answer = "";
+      answerFinalized = false;
+      updateDisplay();
+    }
+
+    function deleteLast() {
+      if (answerFinalized) {
+        clearDisplay();
+        return;
+      }
+      equation = equation.slice(0, -1);
+      try {
+        answer = eval(equation.replace(/\u00F7/g, '/').replace(/\u00D7/g, '*')).toString(); // Replace symbols before eval
+      } catch {
+        answer = "";
+      }
+      updateDisplay();
+    }
+
+    function calculate() {
+      try {
+        answer = eval(equation.replace(/\u00F7/g, '/').replace(/\u00D7/g, '*')).toString(); // Replace symbols before eval
+        answerFinalized = true;
+        updateDisplay();
+      } catch {
+        answer = "Error";
+        equation = "";
+        updateDisplay();
+      }
+    }
+  </script>
+</body>
+</html>
